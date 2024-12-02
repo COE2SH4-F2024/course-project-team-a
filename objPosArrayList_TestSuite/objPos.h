@@ -17,17 +17,24 @@ class objPos
         objPos();
         objPos(int xPos, int yPos, char sym);
         
-        // Respect the rule of six / minimum four
-        // [TODO] Implement the missing special member functions to meet the minimum four rule
-        
-        void setObjPos(objPos o);        
-        void setObjPos(int xPos, int yPos, char sym);  
+        // Rule of Six
+        objPos(const objPos& other); // Copy Constructor
+        objPos& operator=(const objPos& other); // Copy Assignment Operator
+        ~objPos(); // Destructor
+        objPos(objPos&& other) noexcept; // Move Constructor 
+        objPos& operator=(objPos&& other) noexcept; // Move Assignment Operator
 
-        objPos getObjPos() const;
-        char getSymbol() const;
-        char getSymbolIfPosEqual(const objPos* refPos) const;
-        
+        // Methods
+        void setObjPos(const objPos& o);        
+        void setObjPos(int xPos, int yPos, char sym);  
+        void setPosition(int x, int y);
+        void setSymbol(char sym);
+        int getX() const; // Getter for x-coordinate
+        int getY() const; // Getter for y-coordinate
+        char getSymbol() const; // Getter for symbol
+
         bool isPosEqual(const objPos* refPos) const;
+        char getSymbolIfPosEqual(const objPos* refPos) const;
 };
 
 #endif

@@ -1,13 +1,15 @@
 #include "objPos.h"
 
+// Default constructor
 objPos::objPos()
 {
     pos = new Pos;
     pos->x = 0;
     pos->y = 0;
-    symbol = 0; //NULL
+    symbol = 0; // NULL character
 }
 
+// Parameterized constructor
 objPos::objPos(int xPos, int yPos, char sym)
 {
     pos = new Pos;
@@ -16,19 +18,72 @@ objPos::objPos(int xPos, int yPos, char sym)
     symbol = sym;
 }
 
-// Respect the rule of six / minimum four
-// [TODO] Implement the missing special member functions to meet the minimum four rule
+// Copy constructor
+objPos::objPos(const objPos& other)
+{
+    pos = new Pos; // Allocate memory for pos
+    pos->x = other.pos->x;
+    pos->y = other.pos->y;
+    symbol = other.symbol; // Copy symbol
+}
 
+// Copy assignment operator
+objPos& objPos::operator=(const objPos& other)
+{
+    if (this != &other) { // Self-assignment check
+        *pos = *(other.pos); // Copy contents of Pos
+        symbol = other.symbol; 
+    }
+    return *this;
+}
 
+// Move constructor
+objPos::objPos(objPos&& other) noexcept
+    : pos(other.pos), symbol(other.symbol)
+{
+    other.pos = nullptr; // Transfer ownership
+}
 
+// Move assignment operator
+objPos& objPos::operator=(objPos&& other) noexcept
+{
+    if (this != &other) { // Self-assignment check
+        delete pos; // Free current resources
+        pos = other.pos;
+        symbol = other.symbol;
 
-void objPos::setObjPos(objPos o)
+        other.pos = nullptr; // Nullify source
+    }
+    return *this;
+}
+
+// Destructor
+objPos::~objPos()
+{
+    delete pos; // Deallocate memory for pos
+}
+
+// Set position and symbol using another objPos
+void objPos::setObjPos(const objPos& o)
 {
     pos->x = o.pos->x;
     pos->y = o.pos->y;
     symbol = o.symbol;
 }
 
+
+// Setter methods
+void objPos::setPosition(int x, int y) {
+    pos->x = x;
+    pos->y = y;
+}
+
+void objPos::setSymbol(char sym) {
+    symbol = sym;
+}
+
+
+// Set position and symbol directly
 void objPos::setObjPos(int xPos, int yPos, char sym)
 {
     pos->x = xPos;
@@ -36,30 +91,35 @@ void objPos::setObjPos(int xPos, int yPos, char sym)
     symbol = sym;
 }
 
-objPos objPos::getObjPos() const
+// Get the x-coordinate
+int objPos::getX() const
 {
-    objPos returnPos;
-    returnPos.pos->x = pos->x;
-    returnPos.pos->y = pos->y;
-    returnPos.symbol = symbol;
-    
-    return returnPos;
+    return pos->x;
 }
 
+// Get the y-coordinate
+int objPos::getY() const
+{
+    return pos->y;
+}
+
+// Get symbol
 char objPos::getSymbol() const
 {
     return symbol;
 }
 
+// Check if positions are equal
 bool objPos::isPosEqual(const objPos* refPos) const
 {
+    if (refPos == nullptr) return false; // Null safety check
     return (refPos->pos->x == pos->x && refPos->pos->y == pos->y);
 }
 
+// Get symbol if positions are equal
 char objPos::getSymbolIfPosEqual(const objPos* refPos) const
 {
-    if(isPosEqual(refPos))
-        return symbol;
-    else
-        return 0;
+    return isPosEqual(refPos) ? symbol : 0;
 }
+
+

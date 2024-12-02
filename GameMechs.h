@@ -1,3 +1,4 @@
+
 #ifndef GAMEMECHS_H
 #define GAMEMECHS_H
 
@@ -32,7 +33,7 @@ class GameMechs
         bool getLoseFlagStatus() const;
         void setLoseFlag();
 
-        char getInput() const;
+        char getInput() ;
         void setInput(char this_input);
         void clearInput();
 

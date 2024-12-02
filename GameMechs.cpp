@@ -1,76 +1,77 @@
 #include "GameMechs.h"
+#include "MacUILib.h"
+#include <iostream>
 
+// Default Constructor
 GameMechs::GameMechs()
-{
-    
-}
+    : input('\0'), exitFlag(false), loseFlag(false), score(0), boardSizeX(30), boardSizeY(15) {}
 
+// Parameterized Constructor
 GameMechs::GameMechs(int boardX, int boardY)
-{
-    
+    : input('\0'), exitFlag(false), loseFlag(false), score(0), boardSizeX(boardX), boardSizeY(boardY) {}
+
+// Destructor
+GameMechs::~GameMechs() {}
+
+// Getter for exit flag
+bool GameMechs::getExitFlagStatus() const {
+    return exitFlag;
 }
 
-// do you need a destructor?
-GameMechs::~GameMechs()
-{
-    
+// Setter to mark the game for exiting
+void GameMechs::setExitTrue() {
+    exitFlag = true;
 }
 
-bool GameMechs::getExitFlagStatus() const
-{
-
+// Getter for lose flag
+bool GameMechs::getLoseFlagStatus() const {
+    return loseFlag;
 }
 
-bool GameMechs::getLoseFlagStatus() const
-{
-
-}
-    
-
-char GameMechs::getInput() const
-{
-
+// Setter to mark the game as lost
+void GameMechs::setLoseFlag() {
+    loseFlag = true;
 }
 
-int GameMechs::getScore() const
-{
-
+// Getter for user input
+char GameMechs::getInput()  {
+    if (MacUILib_hasChar()) {  // Only process if input is available
+        input = MacUILib_getChar();  // Capture the latest input
+        std::cout << "Input received: " << input << std::endl;  // Debugging the input
+    }
+    return input;
 }
 
-void GameMechs::incrementScore()
-{
-    
+// Actively poll for input
+void GameMechs::setInput(char this_input) {
+    if (MacUILib_hasChar()) {  // Only process if input is available
+        input = MacUILib_getChar();  // Capture the latest input
+        std::cout << "Input received: " << input << std::endl;  // Debugging the input
+    }
 }
 
-int GameMechs::getBoardSizeX() const
-{
-
+// Clears the input field
+void GameMechs::clearInput() {
+    input = '\0';  // Clear the input field after processing
 }
 
-int GameMechs::getBoardSizeY() const
-{
+// Getter for current score
+int GameMechs::getScore() const {
+    return score;
+}
 
+// Increment the score by 1 (can be extended for variable increments)
+void GameMechs::incrementScore() {
+    score++;  // Increment the score by 1
 }
 
 
-void GameMechs::setExitTrue()
-{
-
+// Getter for board size X
+int GameMechs::getBoardSizeX() const {
+    return boardSizeX;
 }
 
-void GameMechs::setLoseFlag()
-{
-    
+// Getter for board size Y
+int GameMechs::getBoardSizeY() const {
+    return boardSizeY;
 }
-
-void GameMechs::setInput(char this_input)
-{
-
-}
-
-void GameMechs::clearInput()
-{
-
-}
-
-// More methods should be added here
