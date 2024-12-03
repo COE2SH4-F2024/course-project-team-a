@@ -152,7 +152,7 @@ void DrawScreen(void) {
 
 void LoopDelay(void)
 {
-    MacUILib_Delay(DELAY_CONST);  // Control game speed
+    MacUILib_Delay(DELAY_CONST);  // Control game speed 
 }
 
 void CleanUp(void)

@@ -12,4 +12,4 @@ Member 1 MacID: [ademb]
 Member 1 StudentID: [400538973]
 
 Member 2 MacID: [zhouz272]
-Member 2 StudentID: [Insert your numerical student ID here]
+Member 2 StudentID: [400528473]

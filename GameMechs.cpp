@@ -52,8 +52,8 @@ void GameMechs::setInput(char this_input) {
 
 // Clears the input field
 void GameMechs::clearInput() {
-    input = '\0';  // Clear the input field after processing
-}
+    input = '\0';  // Clear the input field after processing 
+} 
 
 // Getter for current score
 int GameMechs::getScore() const {

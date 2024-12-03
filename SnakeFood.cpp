@@ -62,8 +62,8 @@ void SnakeFood::generateSpecialFruit(const objPosArrayList& playerPosList, int b
 
 
 
-// Getter for the food positions
-objPosArrayList* SnakeFood::getFoodPositions() {
+// Getter for the food positions 
+objPosArrayList* SnakeFood::getFoodPositions() { 
     return &foodPositions;
 }
 

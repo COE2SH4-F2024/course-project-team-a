@@ -112,7 +112,7 @@ char objPos::getSymbol() const
 // Check if positions are equal
 bool objPos::isPosEqual(const objPos* refPos) const
 {
-    if (refPos == nullptr) return false; // Null safety check
+    if (refPos == nullptr) return false; // Null safety check 
     return (refPos->pos->x == pos->x && refPos->pos->y == pos->y);
 }
 

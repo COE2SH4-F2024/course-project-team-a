@@ -8,7 +8,7 @@ objPosArrayList::objPosArrayList()
     // Ensure all elements are initialized to default objPos
     for (int i = 0; i < arrayCapacity; i++)
     {
-        aList[i] = objPos(); // Default constructor
+        aList[i] = objPos(); // Default constructor 
     }
 }
 

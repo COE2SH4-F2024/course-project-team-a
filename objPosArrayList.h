@@ -5,10 +5,10 @@
 
 #include "objPos.h"
 
-class objPosArrayList
+class objPosArrayList 
 {
     private:
-        objPos* aList;
+        objPos* aList; 
         int listSize;
         int arrayCapacity;
 

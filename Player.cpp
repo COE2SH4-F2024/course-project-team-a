@@ -61,7 +61,7 @@ void Player::movePlayer(SnakeFood& food) {
     if (newY < 0) newY = mainGameMechsRef->getBoardSizeY() - 1;
     if (newY >= mainGameMechsRef->getBoardSizeY()) newY = 0;
 
-    // Check if the snake eats any fruit
+    // Check if the snake eats any fruit 
     bool ateFood = false;
     bool ateSpecialFruit = false;
     

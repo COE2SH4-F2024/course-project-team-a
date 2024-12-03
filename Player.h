@@ -33,7 +33,7 @@ public:
     // Getter for the player's position list (snake body)
     objPosArrayList* getPlayerPosList() const;
 
-    // Optional: Add a getter for direction if needed
+    // Optional: Add a getter for direction if needed 
     Dir getDirection() const { return myDir; }
 
 private:

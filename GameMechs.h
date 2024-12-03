@@ -43,7 +43,7 @@ class GameMechs
         int getScore() const;
         void incrementScore();
         
-        // More methods should be added here
+        // More methods should be added here 
 };
 
 #endif

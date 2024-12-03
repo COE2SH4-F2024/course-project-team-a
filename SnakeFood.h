@@ -17,7 +17,7 @@ public:
     void generateSpecialFruit(const objPosArrayList& playerPosList, int boardSizeX, int boardSizeY);
 
 
-    objPosArrayList* getFoodPositions();  // Get regular food positions
+    objPosArrayList* getFoodPositions();  // Get regular food positions 
     objPos getSpecialFruit() const;       // Get special fruit position
     
 };
