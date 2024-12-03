@@ -1,8 +1,9 @@
 #include "Player.h"
 #include "MacUILib.h"
 #include <iostream>
+#include <algorithm> // For std::max
 
-// Constructor
+
 Player::Player(GameMechs* thisGMRef) {
     mainGameMechsRef = thisGMRef;  // Initialize the reference to GameMechs
     myDir = STOP;
@@ -29,8 +30,6 @@ objPos Player::getPlayerPos() const {
 
 // Update the player's direction based on user input
 void Player::updatePlayerDir() {
-    // Check if a key is available
-    
     char input = mainGameMechsRef->getInput();  // Get user input
 
     // Update the direction based on input
@@ -39,10 +38,7 @@ void Player::updatePlayerDir() {
     else if (input == 'a' && myDir != RIGHT) myDir = LEFT;
     else if (input == 'd' && myDir != LEFT) myDir = RIGHT;
     else if (input == 'p') myDir = STOP;
-
-        
 }
-
 
 // Move the player (snake) based on the current direction
 void Player::movePlayer(SnakeFood& food) {
@@ -50,90 +46,66 @@ void Player::movePlayer(SnakeFood& food) {
     int newX = head.getX();
     int newY = head.getY();
 
-    // Finite State Machine logic for movement
+    // Movement logic
     switch (myDir) {
     case UP:    --newY; break;
     case DOWN:  ++newY; break;
     case LEFT:  --newX; break;
     case RIGHT: ++newX; break;
-    case STOP:  return;  // If the snake is stopped, don't move
+    case STOP:  return;
     }
 
-    // **Wrap-around logic for horizontal (X) direction**:
-    if (newX < 0) {
-        newX = mainGameMechsRef->getBoardSizeX() - 1;  // Wrap from left to right
-    } else if (newX >= mainGameMechsRef->getBoardSizeX()) {
-        newX = 0;  // Wrap from right to left
-    }
+    // Wrap-around logic
+    if (newX < 0) newX = mainGameMechsRef->getBoardSizeX() - 1;
+    if (newX >= mainGameMechsRef->getBoardSizeX()) newX = 0;
+    if (newY < 0) newY = mainGameMechsRef->getBoardSizeY() - 1;
+    if (newY >= mainGameMechsRef->getBoardSizeY()) newY = 0;
 
-    // **Wrap-around logic for vertical (Y) direction**:
-    if (newY < 0) {
-        newY = mainGameMechsRef->getBoardSizeY() - 1;  // Wrap from top to bottom
-    } else if (newY >= mainGameMechsRef->getBoardSizeY()) {
-        newY = 0;  // Wrap from bottom to top
-    }
-
-    // Check if the snake's head moves on top of any food
+    // Check if the snake eats any fruit
     bool ateFood = false;
-    std::vector<objPos> foodPositions = food.getFoodPositions();  // Get all food positions
-    for (const auto& foodPos : foodPositions) {
+    bool ateSpecialFruit = false;
+    
+
+    objPosArrayList* foodPositions = food.getFoodPositions();
+    for (int i = 0; i < foodPositions->getSize(); ++i) {
+        objPos foodPos = foodPositions->getElement(i);
         if (newX == foodPos.getX() && newY == foodPos.getY()) {
             ateFood = true;
             break;
         }
     }
 
-    // Check if the snake's head moves on top of the special fruit
-    bool ateSpecialFruit = false;
-    objPos specialFruit = food.getSpecialFruit();  // Get the special fruit position
+    objPos specialFruit = food.getSpecialFruit();
     if (newX == specialFruit.getX() && newY == specialFruit.getY()) {
         ateSpecialFruit = true;
     }
 
+    
+
     // Insert the new head at the front of the snake
     playerPosList->insertHead(objPos(newX, newY, '*'));
 
-    // If food is eaten, don't remove the tail (snake grows)
+    // Handle growth or shrinking based on fruit
     if (!ateFood && !ateSpecialFruit) {
-    playerPosList->removeTail();  // Normal movement (no growth)
-} else {
-    if (ateFood) {
-        // Regenerate food
-        food.generateFood(*playerPosList, mainGameMechsRef->getBoardSizeX(), mainGameMechsRef->getBoardSizeY(), 3);  // Generate 3 new food items
-        mainGameMechsRef->incrementScore();  // Increment score by 1 for regular food
-    }
-
-    if (ateSpecialFruit) {
-        // Halve the snake's length
-        int newSize = std::max(1, playerPosList->getSize() / 2);  // Ensure minimum size of 1
-        while (playerPosList->getSize() > newSize) {
-            playerPosList->removeTail();  // Remove the tail to shrink the snake
-        }
-
-        // Increment the score by 5 for special fruit
-        for (int i = 0; i < 5; ++i) {
+        playerPosList->removeTail();
+    } else {
+        if (ateFood) {
+            food.generateFood(*playerPosList, mainGameMechsRef->getBoardSizeX(), mainGameMechsRef->getBoardSizeY(), 3);
             mainGameMechsRef->incrementScore();
         }
 
-        // Regenerate the special fruit
-        food.generateSpecialFruit(*playerPosList, mainGameMechsRef->getBoardSizeX(), mainGameMechsRef->getBoardSizeY());
+        if (ateSpecialFruit) {
+            int newSize = std::max(1, playerPosList->getSize() / 2);
+            while (playerPosList->getSize() > newSize) {
+                playerPosList->removeTail();
+            }
+            for (int i = 0; i < 5; ++i) mainGameMechsRef->incrementScore();
+            food.generateSpecialFruit(*playerPosList, mainGameMechsRef->getBoardSizeX(), mainGameMechsRef->getBoardSizeY());
+        }
 
-        std::cout << "Special fruit eaten! Score: " << mainGameMechsRef->getScore() << std::endl;  // Debugging
+       
     }
-}   
 }
-
-
-
-/*void Player::grow() {
-    if (playerPosList->getSize() > 0) {
-        // Get the current tail segment
-        objPos tail = playerPosList->getElement(playerPosList->getSize() - 1);
-
-        // Add a new segment at the same position as the current tail
-        playerPosList->insertTail(tail);
-    }
-}*/
 
 
 // Check if the player collides with its own body
@@ -146,18 +118,6 @@ bool Player::detectCollision() const {
     }
     return false;
 }
-
-// Handle food consumption (grow the snake and generate new food)
-/*void Player::eatFood(SnakeFood& food) {
-    objPos headPos = getPlayerPos();  // Get the current position of the snake's head
-
-    // Check if the snake's head is at the food's position
-    if (headPos.isPosEqual(&food.getFoodPos())) {
-        grow();  // Grow the snake
-        mainGameMechsRef->incrementScore();  // Optional: Increase score
-        food.generateFood(*getPlayerPosList(), mainGameMechsRef->getBoardSizeX(), mainGameMechsRef->getBoardSizeY());  // Generate new food
-    }
-}*/
 
 // Get the player's position list
 objPosArrayList* Player::getPlayerPosList() const {

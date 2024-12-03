@@ -24,7 +24,7 @@ class objPosArrayList
         
         objPos getHeadElement() const;
         objPos getTailElement() const;
-        objPos& getElement(int index) const;  // Return a reference to objPos
+        objPos getElement(int index) const;
 };
 
 #endif

@@ -40,6 +40,7 @@ private:
     objPosArrayList* playerPosList;   // Tracks all body segments of the snake
     Dir myDir;                         // Current direction of movement
     GameMechs* mainGameMechsRef;       // Reference to the main game mechanics (GameMechs)
+   
 };
 
 #endif // PLAYER_H

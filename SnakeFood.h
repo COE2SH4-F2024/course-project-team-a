@@ -2,22 +2,24 @@
 #define SNAKEFOOD_H
 
 #include "objPos.h"
-#include "objPosArrayList.h"  // Needed to access the player's body
-#include <vector>  // To store multiple food positions
+#include "objPosArrayList.h"
 
 class SnakeFood {
 private:
-    std::vector<objPos> foodPositions; // Store multiple food positions
-     objPos specialFruit;
+    objPosArrayList foodPositions;  // Regular food positions
+    objPos specialFruit;            // Special fruit that shrinks the snake
+    
 
 public:
-    SnakeFood();  // Constructor to initialize the food object
+    SnakeFood();  // Constructor
 
-    // Methods
-    void generateFood(const objPosArrayList& playerPosList, int boardSizeX, int boardSizeY, int numFood); // Generate multiple foods
-    void generateSpecialFruit(const objPosArrayList& playerPosList, int boardSizeX, int boardSizeY); // Generate special fruit
-    std::vector<objPos> getFoodPositions() const;  // Returns the list of food positions
-    objPos getSpecialFruit() const;  // Return the special fruit position
+    void generateFood(const objPosArrayList& playerPosList, int boardSizeX, int boardSizeY, int numFood);
+    void generateSpecialFruit(const objPosArrayList& playerPosList, int boardSizeX, int boardSizeY);
+
+
+    objPosArrayList* getFoodPositions();  // Get regular food positions
+    objPos getSpecialFruit() const;       // Get special fruit position
+    
 };
 
 #endif // SNAKEFOOD_H

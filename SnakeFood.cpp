@@ -1,68 +1,73 @@
 #include "SnakeFood.h"
-#include <cstdlib>   // For rand()
-#include <ctime>     // For time-based randomization
+#include <cstdlib>
+#include <ctime>
 
 // Constructor
 SnakeFood::SnakeFood() {
-    std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed the random number generator
+    std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed RNG
 }
 
-// Method to generate food at random locations, avoiding the player's body
+// Generate multiple food items within the valid area
 void SnakeFood::generateFood(const objPosArrayList& playerPosList, int boardSizeX, int boardSizeY, int numFood) {
-    foodPositions.clear(); // Clear any previous food items
+    // Clear existing food positions
+    while (foodPositions.getSize() > 0) {
+        foodPositions.removeTail();
+    }
 
-    bool positionValid = false;
+    while (foodPositions.getSize() < numFood) {  // Generate multiple foods
+        int x = std::rand() % (boardSizeX - 2) + 1;  // Ensure x is in [1, boardSizeX - 2]
+        int y = std::rand() % (boardSizeY - 2) + 1;  // Ensure y is in [1, boardSizeY - 2]
 
-    while (foodPositions.size() < numFood) {  // Generate multiple foods
-        int x = std::rand() % boardSizeX;  // Random x position
-        int y = std::rand() % boardSizeY;  // Random y position
-
-        positionValid = true;
+        bool positionValid = true;
 
         // Check if the generated position overlaps with the player's body
         for (int i = 0; i < playerPosList.getSize(); ++i) {
             objPos segment = playerPosList.getElement(i);
             if (segment.getX() == x && segment.getY() == y) {
-                positionValid = false;  // If overlap, generate new position
+                positionValid = false;  // Invalid position
                 break;
             }
         }
 
         if (positionValid) {
-            foodPositions.push_back(objPos(x, y, 'F'));  // Add the new food position
+            foodPositions.insertTail(objPos(x, y, '@'));  // Add valid food position
         }
     }
 }
 
+// Generate a special fruit within the valid area
 void SnakeFood::generateSpecialFruit(const objPosArrayList& playerPosList, int boardSizeX, int boardSizeY) {
     bool positionValid = false;
 
-    while (!positionValid) {  // Keep generating until position is valid
-        int x = std::rand() % boardSizeX;  // Random x position
-        int y = std::rand() % boardSizeY;  // Random y position
+    while (!positionValid) {
+        int x = std::rand() % (boardSizeX - 2) + 1;  // Ensure x is in [1, boardSizeX - 2]
+        int y = std::rand() % (boardSizeY - 2) + 1;  // Ensure y is in [1, boardSizeY - 2]
 
         positionValid = true;
 
-        // Check if the generated position overlaps with the player's body
+        // Check if the position overlaps with the player's body
         for (int i = 0; i < playerPosList.getSize(); ++i) {
             objPos segment = playerPosList.getElement(i);
             if (segment.getX() == x && segment.getY() == y) {
-                positionValid = false;  // If overlap, generate new position
+                positionValid = false;  // Invalid position
                 break;
             }
         }
 
         if (positionValid) {
-            specialFruit = objPos(x, y, 'S');  // Special fruit (different symbol, e.g. 'S')
+            specialFruit = objPos(x, y, 'X');  // Assign position to special fruit
         }
     }
 }
 
-// Getter for the list of food positions (returns a vector of objPos)
-std::vector<objPos> SnakeFood::getFoodPositions() const {
-    return foodPositions;
+
+
+// Getter for the food positions
+objPosArrayList* SnakeFood::getFoodPositions() {
+    return &foodPositions;
 }
 
+// Getter for the special fruit position
 objPos SnakeFood::getSpecialFruit() const {
     return specialFruit;
 }

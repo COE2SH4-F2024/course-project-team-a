@@ -36,7 +36,7 @@ int main(void)
     }
     
     CleanUp();
-    MacUILib_printf("GAME OVER\n");
+    //MacUILib_printf("GAME OVER3\n");
 }
 
 void Initialize(void)
@@ -44,6 +44,7 @@ void Initialize(void)
     MacUILib_init();
     MacUILib_clearScreen();
     exitFlag = false;
+    
 
     // Initialize food generation with the entire player body and board size
     food.generateFood(*player.getPlayerPosList(), gameMechs.getBoardSizeX(), gameMechs.getBoardSizeY(), 3); // Generate regular food
@@ -58,8 +59,8 @@ void GetInput(void)
 
     // Check for 'q' to quit the game
     if (gameMechs.getInput() == 'q') {
-        MacUILib_printf("GAME OVER\n");
         exitFlag = true;  // Set exit flag to end the game
+        return;  // Skip further input handling
     }
 
     // Pass input to the player
@@ -70,9 +71,9 @@ void RunLogic(void) {
     // Move the player based on the updated direction and handle food consumption
     player.movePlayer(food);  // Pass food so that the snake can grow if it eats food
 
+    
     // Check for collision with the snake's body
     if (player.detectCollision()) {
-        MacUILib_printf("GAME OVER\n");
         exitFlag = true;  // End the game if a collision occurs
     }
 }
@@ -81,8 +82,8 @@ void DrawScreen(void) {
     MacUILib_clearScreen();  // Clear the screen to start fresh
 
     // Get the board width and height from GameMechs
-    int boardWidth = gameMechs.getBoardSizeX();  // Use gameMechs directly
-    int boardHeight = gameMechs.getBoardSizeY();  // Use gameMechs directly
+    int boardWidth = gameMechs.getBoardSizeX();
+    int boardHeight = gameMechs.getBoardSizeY();
 
     // Draw the top border
     for (int x = 0; x < boardWidth; ++x) {
@@ -90,14 +91,14 @@ void DrawScreen(void) {
     }
     MacUILib_printf("\n");
 
-    // Draw the body of the board (between top and bottom borders)
+    // Draw the board contents
     for (int y = 1; y < boardHeight - 1; ++y) {
-        MacUILib_printf("#");
+        MacUILib_printf("#");  // Left border
 
         for (int x = 1; x < boardWidth - 1; ++x) {
             bool drawn = false;
 
-            // Check if this position has the snake
+            // Check for snake body
             for (int i = 0; i < player.getPlayerPosList()->getSize(); ++i) {
                 objPos segment = player.getPlayerPosList()->getElement(i);
                 if (segment.getX() == x && segment.getY() == y) {
@@ -109,7 +110,7 @@ void DrawScreen(void) {
 
             if (!drawn) {
                 // Check for special fruit
-                objPos specialFruit = food.getSpecialFruit();  // Get special fruit position
+                objPos specialFruit = food.getSpecialFruit();
                 if (specialFruit.getX() == x && specialFruit.getY() == y) {
                     MacUILib_printf("X");  // Special fruit
                     drawn = true;
@@ -117,9 +118,10 @@ void DrawScreen(void) {
             }
 
             if (!drawn) {
-                // Check for regular food items
-                std::vector<objPos> foodPositions = food.getFoodPositions();
-                for (const auto& foodPos : foodPositions) {
+                // Check for regular food
+                objPosArrayList* foodPositions = food.getFoodPositions();
+                for (int i = 0; i < foodPositions->getSize(); ++i) {
+                    objPos foodPos = foodPositions->getElement(i);
                     if (foodPos.getX() == x && foodPos.getY() == y) {
                         MacUILib_printf("@");  // Regular food
                         drawn = true;
@@ -129,11 +131,11 @@ void DrawScreen(void) {
             }
 
             if (!drawn) {
-                MacUILib_printf(" ");  // Empty space
+                MacUILib_printf(" ");  // Emptyp space
             }
         }
 
-        MacUILib_printf("#\n");
+        MacUILib_printf("#\n");  // Right border
     }
 
     // Draw the bottom border
@@ -142,18 +144,27 @@ void DrawScreen(void) {
     }
     MacUILib_printf("\n");
 
-    // Display the score at the top right corner
-    MacUILib_printf("Score: %d\n", gameMechs.getScore());  // Access score directly from gameMechs
+    // Display the score
+    MacUILib_printf("Score: %d\n", gameMechs.getScore());
+    MacUILib_printf("@ - Regular Fruit: Increases snake length by 1 and score by 1.\n");
+    MacUILib_printf("X - Special Fruit: Halves snake length and increases score by 5.\n\n");
 }
-
 
 void LoopDelay(void)
 {
-    MacUILib_Delay(DELAY_CONST); // 0.1s delay to control game speed
+    MacUILib_Delay(DELAY_CONST);  // Control game speed
 }
 
 void CleanUp(void)
 {
     MacUILib_clearScreen();
+    int finalScore = gameMechs.getScore();
+    int snakeLength = player.getPlayerPosList()->getSize();
+
+    MacUILib_printf("GAME OVER\n");
+    MacUILib_printf("Final Score: %d\n", finalScore);
+    MacUILib_printf("Snake Length: %d\n", snakeLength);
+
+
     MacUILib_uninit();
 }
